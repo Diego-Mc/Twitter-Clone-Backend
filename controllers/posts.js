@@ -1,5 +1,23 @@
 import Post from '../models/Post.js'
 import User from '../models/User.js'
+import Tag from '../models/Tag.js'
+
+//API:
+//createPost
+//createReply
+
+//getFeedPosts
+//getUserPosts
+//getUserPostsAndReplies
+//getUserLikedPosts
+//getUserBookmarkedPosts
+//getPostReplies
+//getTagFeed
+
+//likePost
+//bookmark
+
+//removePost (if no replies remove from DB, if replies remove data (front shows "user removed his post"))
 
 /* CREATE */
 export const createPost = async (req, res) => {
@@ -17,6 +35,7 @@ export const createPost = async (req, res) => {
       replies: [],
     })
     await newPost.save()
+    await _addPostToTags(newPost)
 
     const posts = await Post.find()
     res.status(201).json(posts)
@@ -42,6 +61,7 @@ export const createReply = async (req, res) => {
       replies: [],
     })
     newPost = await newPost.save()
+    await _addPostToTags(newPost)
 
     const post = await Post.findById(postId)
     post.comments.push(newPost._id)
@@ -53,22 +73,6 @@ export const createReply = async (req, res) => {
     res.status(409).json({ error: err.message })
   }
 }
-
-//API:
-//createPost
-//createReply
-
-//getFeedPosts
-//getUserPosts
-//getUserPostsAndReplies
-//getUserLikedPosts
-//getUserBookmarkedPosts
-//getPostReplies (i.e with replies loaded)
-
-//likePost
-//bookmark
-
-//removePost (if no replies remove from DB, if replies remove data (front shows "user removed his post"))
 
 /* READ */
 export const getFeedPosts = async (req, res) => {
@@ -132,6 +136,20 @@ export const getPostReplies = async (req, res) => {
   }
 }
 
+export const getTagFeed = async (req, res) => {
+  try {
+    const { tagName } = req.params
+    const tag = await Tag.find({ tagName })
+    const postsPrms = Array.from(tag.posts.keys()).map(async (postId) => {
+      return await Post.findById(postId)
+    })
+    const posts = await Promise.all(postsPrms)
+    res.status(200).json(posts)
+  } catch (err) {
+    res.status(404).json({ error: err.message })
+  }
+}
+
 /* UPDATE */
 export const likePost = async (req, res) => {
   try {
@@ -174,5 +192,30 @@ export const bookmarkPost = async (req, res) => {
     res.status(200).json(updatedPost)
   } catch (err) {
     res.status(404).json({ error: err.message })
+  }
+}
+
+/* UTILS: */
+function _addPostToTags(post) {
+  try {
+    const postTags = post.text.match(/#\w+/g).map((x) => x.substr(1)) || []
+
+    const updateTagsPrms = postTags.map(async (tagName) => {
+      const tag = await Tag.find({ tagName })
+      const isTagged = tag.posts.get(postId)
+
+      if (isTagged) tag.posts.delete(postId)
+      else tag.posts.set(postId, true)
+
+      return await Tag.findAndUpdate(
+        { tagName },
+        { posts: tag.posts },
+        { new: true }
+      )
+    })
+
+    return Promise.all(updateTagsPrms)
+  } catch (err) {
+    throw err
   }
 }

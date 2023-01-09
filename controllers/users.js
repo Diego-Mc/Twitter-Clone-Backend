@@ -3,8 +3,8 @@ import User from '../models/User.js'
 /* READ */
 export const getUser = async (req, res) => {
   try {
-    const { id } = req.params
-    const user = await User.findById(id)
+    const { userId } = req.params
+    const user = await User.findById(userId)
     res.status(200).json(user)
   } catch (err) {
     res.status(404).json({ error: err.message })
@@ -13,8 +13,8 @@ export const getUser = async (req, res) => {
 
 export const getUserFollowers = async (req, res) => {
   try {
-    const { id } = req.params
-    const user = await User.findById(id)
+    const { userId } = req.params
+    const user = await User.findById(userId)
 
     const followers = await Promise.all(
       user.followers.map((id) => User.findById(id))
@@ -34,8 +34,8 @@ export const getUserFollowers = async (req, res) => {
 
 export const getUserFollowing = async (req, res) => {
   try {
-    const { id } = req.params
-    const user = await User.findById(id)
+    const { userId } = req.params
+    const user = await User.findById(userId)
 
     const followings = await Promise.all(
       user.followings.map((id) => User.findById(id))
@@ -56,7 +56,7 @@ export const getUserFollowing = async (req, res) => {
 /* UPDATE */
 export const toggleFollow = async (req, res) => {
   try {
-    const { id: userId, userToFollowId } = req.params
+    const { userId, userToFollowId } = req.params
     const user = await User.findById(userId)
     const userToFollow = await User.findById(userToFollowId)
 
