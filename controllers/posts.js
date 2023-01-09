@@ -63,12 +63,10 @@ export const createReply = async (req, res) => {
     newPost = await newPost.save()
     await _addPostToTags(newPost)
 
-    const post = await Post.findById(postId)
-    post.comments.push(newPost._id)
-    await post.save()
-
-    const posts = await Post.find()
-    res.status(201).json(posts)
+    let post = await Post.findById(postId)
+    post.replies.push(newPost._id.toString())
+    post = await post.save()
+    res.status(201).json(post)
   } catch (err) {
     res.status(409).json({ error: err.message })
   }
@@ -107,7 +105,8 @@ export const getUserPostsAndReplies = async (req, res) => {
 export const getUserLikedPosts = async (req, res) => {
   try {
     const { userId } = req.params
-    const posts = await Post.find({ likes: { userId } })
+    const query = `likes.${userId}`
+    const posts = await Post.find({ [query]: { $exists: true } })
     res.status(200).json(posts)
   } catch (err) {
     res.status(404).json({ error: err.message })
@@ -117,8 +116,8 @@ export const getUserLikedPosts = async (req, res) => {
 export const getUserBookmarkedPosts = async (req, res) => {
   try {
     const { userId } = req.params
-    const bookmarks = await Post.findById(userId)
-    const posts = await Post.find({ _id: { $in: bookmarks } })
+    const user = await User.findById(userId)
+    const posts = await Post.find({ _id: { $in: user.bookmarks } })
     res.status(200).json(posts)
   } catch (err) {
     res.status(404).json({ error: err.message })
@@ -136,10 +135,10 @@ export const getPostReplies = async (req, res) => {
   }
 }
 
-export const getTagFeed = async (req, res) => {
+export const getTagPosts = async (req, res) => {
   try {
     const { tagName } = req.params
-    const tag = await Tag.find({ tagName })
+    const tag = await Tag.findOne({ tagName })
     const postsPrms = Array.from(tag.posts.keys()).map(async (postId) => {
       return await Post.findById(postId)
     })
@@ -183,13 +182,13 @@ export const bookmarkPost = async (req, res) => {
     if (bookmarkIdx > -1) res.status(400).json({ error: 'Already bookmarked' })
     else user.bookmarks.push(postId)
 
-    const updatedPost = await Post.findByIdAndUpdate(
-      postId,
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
       { bookmarks: user.bookmarks },
       { new: true }
     )
 
-    res.status(200).json(updatedPost)
+    res.status(200).json(updatedUser)
   } catch (err) {
     res.status(404).json({ error: err.message })
   }
@@ -201,17 +200,20 @@ function _addPostToTags(post) {
     const postTags = post.text.match(/#\w+/g).map((x) => x.substr(1)) || []
 
     const updateTagsPrms = postTags.map(async (tagName) => {
-      const tag = await Tag.find({ tagName })
-      const isTagged = tag.posts.get(postId)
+      let tag = await Tag.findOne({ tagName })
+
+      if (!tag) {
+        tag = new Tag({ tagName })
+        await tag.save()
+      }
+
+      const postId = post._id.toString()
+      const isTagged = tag.posts?.get(postId)
 
       if (isTagged) tag.posts.delete(postId)
       else tag.posts.set(postId, true)
 
-      return await Tag.findAndUpdate(
-        { tagName },
-        { posts: tag.posts },
-        { new: true }
-      )
+      return await tag.save()
     })
 
     return Promise.all(updateTagsPrms)

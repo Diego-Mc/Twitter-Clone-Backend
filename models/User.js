@@ -31,6 +31,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
       min: 2,
       max: 140,
+      default: '',
     },
     imgUrl: {
       type: String,
@@ -49,18 +50,6 @@ const UserSchema = new mongoose.Schema(
       default: [],
     },
     bookmarks: {
-      type: Array,
-      default: [],
-    },
-    likes: {
-      type: Array,
-      default: [],
-    },
-    replies: {
-      type: Array,
-      default: [],
-    },
-    posts: {
       type: Array,
       default: [],
     },

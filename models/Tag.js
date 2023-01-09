@@ -10,6 +10,7 @@ const tagSchema = mongoose.Schema(
     posts: {
       type: Map, //no Set support so map: {postId: true, postId2: true}
       of: Boolean,
+      default: {},
     },
   },
   { timestamps: true }

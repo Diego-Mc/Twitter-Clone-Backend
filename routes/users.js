@@ -1,18 +1,23 @@
 import express from 'express'
 import {
   getUser,
-  getUserFriends,
-  addRemoveFriend,
+  getUserFollowing,
+  getUserFollowers,
+  toggleFollow,
+  getUsers,
 } from '../controllers/users.js'
 import { verifyToken } from '../middleware/auth.js'
 
 const router = express.Router()
 
 /* READ */
-router.get('/:id', verifyToken, getUser)
-router.get('/:id/friends', verifyToken, getUserFriends)
+router.get('/', getUsers) //TODO: remove in prod
+router.get('/:userId', verifyToken, getUser)
+router.get('/:userId/followers', verifyToken, getUserFollowers)
+router.get('/:userId/following', verifyToken, getUserFollowing)
 
 /* UPDATE */
-router.patch('/:id/:friendId', verifyToken, addRemoveFriend)
+//TODO: not only verify token, but also verify token===user
+router.patch('/:userId/:userToFollowId', verifyToken, toggleFollow)
 
 export default router
