@@ -6,29 +6,31 @@ const postSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    isRepost: Boolean,
     repliedTo: String, //postId
-    composerId: {
+    composerUsername: {
       type: String,
       required: true,
     },
+    composerFullName: {
+      type: String,
+      required: true,
+    },
+    composerImgUrl: String,
     text: {
       type: String,
       required: true,
       min: 1,
       max: 280,
     },
+    imgUrl: String,
     likes: {
       type: Map, //no Set support so map: {userId: true, userId2: true}
       of: Boolean,
+      default: {},
     },
-    comments: {
-      type: Map, //no Set support so map: {postId: true, postId2: true}
-      of: Boolean,
-    },
-    reposts: {
-      type: Map, //no Set support so map: {postId: true, postId2: true}
-      of: Boolean,
+    replies: {
+      type: Array,
+      default: [],
     },
   },
   { timestamps: true }
