@@ -22,6 +22,18 @@ export const getUser = async (req, res) => {
   }
 }
 
+export const getRandomToFollow = async (req, res) => {
+  try {
+    const { userId } = req.params
+    const usersToFollow = await User.find({
+      $and: [{ _id: { $ne: userId } }, { following: { $nin: userId } }],
+    }).limit(3)
+    res.status(200).json(usersToFollow)
+  } catch (err) {
+    res.status(404).json({ error: err.message })
+  }
+}
+
 export const getUserFollowers = async (req, res) => {
   try {
     const { userId } = req.params
@@ -47,7 +59,7 @@ export const getUserFollowers = async (req, res) => {
   }
 }
 
-export const getUserFollowing = async (req, res) => {
+export const getUserFollowings = async (req, res) => {
   try {
     const { userId } = req.params
     const user = await User.findById(userId)

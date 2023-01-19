@@ -37,7 +37,7 @@ export const createPost = async (req, res) => {
     await newPost.save()
     await _addPostToTags(newPost)
 
-    const posts = await Post.find()
+    const posts = await Post.find({})
     res.status(201).json(posts)
   } catch (err) {
     res.status(409).json({ error: err.message })
@@ -75,7 +75,7 @@ export const createReply = async (req, res) => {
 /* READ */
 export const getFeedPosts = async (req, res) => {
   try {
-    const posts = await Post.find()
+    const posts = await Post.find({})
     res.status(200).json(posts)
   } catch (err) {
     res.status(404).json({ error: err.message })
@@ -124,26 +124,22 @@ export const getUserBookmarkedPosts = async (req, res) => {
   }
 }
 
+export const getPost = async (req, res) => {
+  try {
+    const { postId } = req.params
+    const post = await Post.findById(postId)
+    res.status(200).json(post)
+  } catch (err) {
+    res.status(404).json({ error: err.message })
+  }
+}
+
 export const getPostReplies = async (req, res) => {
   try {
     const { postId } = req.params
     const post = await Post.findById(postId)
     const replies = await Post.find({ _id: { $in: post.replies } })
     res.status(200).json(replies)
-  } catch (err) {
-    res.status(404).json({ error: err.message })
-  }
-}
-
-export const getTagPosts = async (req, res) => {
-  try {
-    const { tagName } = req.params
-    const tag = await Tag.findOne({ tagName })
-    const postsPrms = Array.from(tag.posts.keys()).map(async (postId) => {
-      return await Post.findById(postId)
-    })
-    const posts = await Promise.all(postsPrms)
-    res.status(200).json(posts)
   } catch (err) {
     res.status(404).json({ error: err.message })
   }
@@ -197,7 +193,7 @@ export const bookmarkPost = async (req, res) => {
 /* UTILS: */
 function _addPostToTags(post) {
   try {
-    const postTags = post.text.match(/#\w+/g).map((x) => x.substr(1)) || []
+    const postTags = post.text.match(/#\w+/g)?.map((x) => x.substr(1)) || []
 
     const updateTagsPrms = postTags.map(async (tagName) => {
       let tag = await Tag.findOne({ tagName })

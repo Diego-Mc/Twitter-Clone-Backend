@@ -11,6 +11,7 @@ import { fileURLToPath } from 'url'
 import authRoutes from './routes/auth.js'
 import userRoutes from './routes/users.js'
 import postRoutes from './routes/posts.js'
+import tagsRoutes from './routes/tags.js'
 import { createPost } from './controllers/posts.js'
 import { register } from './controllers/auth.js'
 import { verifyToken } from './middleware/auth.js'
@@ -29,7 +30,8 @@ app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }))
 app.use(morgan('common'))
 app.use(bodyParser.json({ limit: '30mb', extended: true }))
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
-app.use(cors())
+//TODO: setup cors for dist
+app.use(cors({ credentials: true, origin: 'http://localhost:5173' }))
 app.use('/assets', express.static(path.join(__dirname, 'public/assets')))
 
 /* FILE STORAGE */
@@ -53,6 +55,7 @@ app.use('/assets', express.static(path.join(__dirname, 'public/assets')))
 app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/posts', postRoutes)
+app.use('/api/tags', tagsRoutes)
 
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001

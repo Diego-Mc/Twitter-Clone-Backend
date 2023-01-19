@@ -4,8 +4,8 @@ import {
   createPost,
   createReply,
   getFeedPosts,
+  getPost,
   getPostReplies,
-  getTagPosts,
   getUserBookmarkedPosts,
   getUserLikedPosts,
   getUserPosts,
@@ -26,11 +26,11 @@ router.get('/profile/:userId', getUserPosts)
 router.get('/profile/all/:userId', getUserPostsAndReplies)
 router.get('/profile/likes/:userId', getUserLikedPosts)
 router.get('/profile/bookmarks/:userId', getUserBookmarkedPosts)
+router.get('/:postId', getPost)
 router.get('/:postId/replies', getPostReplies)
-router.get('/tag/:tagName', getTagPosts)
 
 /* UPDATE */
-router.patch('/:postId/like', verifyToken, likePost)
-router.patch('/:postId/bookmark', verifyToken, bookmarkPost)
+router.patch('/:postId/like', likePost)
+router.patch('/:postId/bookmark', bookmarkPost)
 
 export default router
