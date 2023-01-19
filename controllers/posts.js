@@ -1,6 +1,7 @@
 import Post from '../models/Post.js'
 import User from '../models/User.js'
 import Tag from '../models/Tag.js'
+import { utilService } from '../services/util.service.js'
 
 //API:
 //createPost
@@ -193,7 +194,7 @@ export const bookmarkPost = async (req, res) => {
 /* UTILS: */
 function _addPostToTags(post) {
   try {
-    const postTags = post.text.match(/#\w+/g)?.map((x) => x.substr(1)) || []
+    const postTags = utilService.getHashtags(post.text)
 
     const updateTagsPrms = postTags.map(async (tagName) => {
       let tag = await Tag.findOne({ tagName })
