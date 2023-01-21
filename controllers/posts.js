@@ -76,7 +76,15 @@ export const createReply = async (req, res) => {
 /* READ */
 export const getFeedPosts = async (req, res) => {
   try {
-    const posts = await Post.find({})
+    const filterBy = req.query
+    console.log('query', req.query)
+    const criteria = {}
+    if (filterBy) {
+      console.log('filter', filterBy)
+      if (filterBy.search)
+        criteria.text = { $regex: filterBy.search, $options: 'i' }
+    }
+    const posts = await Post.find(criteria)
     res.status(200).json(posts)
   } catch (err) {
     res.status(404).json({ error: err.message })
@@ -103,22 +111,21 @@ export const getUserPostsAndReplies = async (req, res) => {
   }
 }
 
-export const getUserLikedPosts = async (req, res) => {
+export const getUserMediaPosts = async (req, res) => {
   try {
     const { userId } = req.params
-    const query = `likes.${userId}`
-    const posts = await Post.find({ [query]: { $exists: true } })
+    const posts = await Post.find({ userId, imgUrl: { $exists: true } })
     res.status(200).json(posts)
   } catch (err) {
     res.status(404).json({ error: err.message })
   }
 }
 
-export const getUserBookmarkedPosts = async (req, res) => {
+export const getUserLikedPosts = async (req, res) => {
   try {
     const { userId } = req.params
-    const user = await User.findById(userId)
-    const posts = await Post.find({ _id: { $in: user.bookmarks } })
+    const query = `likes.${userId}`
+    const posts = await Post.find({ [query]: { $exists: true } })
     res.status(200).json(posts)
   } catch (err) {
     res.status(404).json({ error: err.message })
@@ -176,7 +183,7 @@ export const bookmarkPost = async (req, res) => {
     const user = await User.findById(userId)
     const bookmarkIdx = user.bookmarks.indexOf(postId)
 
-    if (bookmarkIdx > -1) res.status(400).json({ error: 'Already bookmarked' })
+    if (bookmarkIdx > -1) user.bookmarks.splice(bookmarkIdx, 1)
     else user.bookmarks.push(postId)
 
     const updatedUser = await User.findByIdAndUpdate(

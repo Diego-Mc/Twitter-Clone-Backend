@@ -14,5 +14,5 @@ function getMatches(string, regex, index = 1) {
 
 function getHashtags(str) {
   const hashtagReg = /#([A-Za-z][A-Za-z0-9_]*)/g
-  return getMatches(str, hashtagReg, 0)
+  return getMatches(str, hashtagReg, 1)
 }

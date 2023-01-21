@@ -22,11 +22,21 @@ export const getUser = async (req, res) => {
   }
 }
 
+export const getLoggedInUser = async (req, res) => {
+  try {
+    const { userId } = req
+    const user = await User.findById(userId)
+    res.status(200).json(user)
+  } catch (err) {
+    res.status(404).json({ error: err.message })
+  }
+}
+
 export const getRandomToFollow = async (req, res) => {
   try {
     const { userId } = req.params
     const usersToFollow = await User.find({
-      $and: [{ _id: { $ne: userId } }, { following: { $nin: userId } }],
+      $and: [{ _id: { $ne: userId } }, { followers: { $nin: userId } }],
     }).limit(3)
     res.status(200).json(usersToFollow)
   } catch (err) {

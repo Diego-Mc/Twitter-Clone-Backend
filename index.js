@@ -18,6 +18,7 @@ import { verifyToken } from './middleware/auth.js'
 import User from './models/User.js'
 import Post from './models/Post.js'
 import { users, posts } from './data/index.js'
+import cookieParser from 'cookie-parser'
 
 /* CONFIG */
 const __filepath = fileURLToPath(import.meta.url)
@@ -33,6 +34,7 @@ app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
 //TODO: setup cors for dist
 app.use(cors({ credentials: true, origin: 'http://localhost:5173' }))
 app.use('/assets', express.static(path.join(__dirname, 'public/assets')))
+app.use(cookieParser())
 
 /* FILE STORAGE */
 // const storage = multer.diskStorage({
