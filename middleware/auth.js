@@ -5,7 +5,7 @@ export const verifyToken = async (req, res, next) => {
     let token = req.cookies.jwt
     if (!token) return res.status(403).send('Access Denied')
     const verified = jwt.verify(token, process.env.JWT_SECRET)
-    req.userId = verified
+    req.userId = verified.id
     next()
   } catch (err) {
     res.status(500).json({ error: err.message })

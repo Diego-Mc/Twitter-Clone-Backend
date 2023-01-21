@@ -34,7 +34,7 @@ export const getLoggedInUser = async (req, res) => {
 
 export const getRandomToFollow = async (req, res) => {
   try {
-    const { userId } = req.params
+    const { userId } = req
     const usersToFollow = await User.find({
       $and: [{ _id: { $ne: userId } }, { followers: { $nin: userId } }],
     }).limit(3)
@@ -97,7 +97,8 @@ export const getUserFollowings = async (req, res) => {
 /* UPDATE */
 export const toggleFollow = async (req, res) => {
   try {
-    const { userId, userToFollowId } = req.params
+    const { userToFollowId } = req.params
+    const { userId } = req
     const user = await User.findById(userId)
     const userToFollow = await User.findById(userToFollowId)
 

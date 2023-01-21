@@ -34,7 +34,8 @@ export const register = async (req, res) => {
       bookmarks,
     })
     const savedUser = await newUser.save()
-    res.status(201).json(savedUser)
+
+    _handleSuccess(savedUser, res)
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
@@ -44,20 +45,23 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body
-    let user = await User.findOne({ email })
-    if (!user) {
-      user = await User.findOne({ username: email })
-      if (!user) return res.status(400).json({ msg: 'User does not exist.' })
-    }
+    const user = await User.findOne({ email })
+    if (!user) return res.status(400).json({ msg: 'User does not exist.' })
 
     const isMatch = await bcrypt.compare(password, user.password)
     if (!isMatch) return res.status(400).json({ msg: 'Invalid credentials.' })
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
-    user.password = undefined
-    res.status(200).json({ token, user })
-    res.cookie('jwt', token, { httpOnly: true, sameSite: 'strict' })
+    _handleSuccess(user, res)
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
+}
+function _handleSuccess(user, res) {
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+  user.password = undefined
+  res.cookie('jwt', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+  })
+  res.status(200).json({ token })
 }

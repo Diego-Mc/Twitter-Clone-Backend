@@ -32,9 +32,9 @@ app.use(morgan('common'))
 app.use(bodyParser.json({ limit: '30mb', extended: true }))
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
 //TODO: setup cors for dist
-app.use(cors({ credentials: true, origin: 'http://localhost:5173' }))
-app.use('/assets', express.static(path.join(__dirname, 'public/assets')))
 app.use(cookieParser())
+app.use(cors({ credentials: true, origin: true }))
+app.use('/assets', express.static(path.join(__dirname, 'public/assets')))
 
 /* FILE STORAGE */
 // const storage = multer.diskStorage({

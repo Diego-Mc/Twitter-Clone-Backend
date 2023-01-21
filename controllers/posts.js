@@ -77,10 +77,8 @@ export const createReply = async (req, res) => {
 export const getFeedPosts = async (req, res) => {
   try {
     const filterBy = req.query
-    console.log('query', req.query)
     const criteria = {}
     if (filterBy) {
-      console.log('filter', filterBy)
       if (filterBy.search)
         criteria.text = { $regex: filterBy.search, $options: 'i' }
     }
@@ -157,7 +155,7 @@ export const getPostReplies = async (req, res) => {
 export const likePost = async (req, res) => {
   try {
     const { postId } = req.params
-    const { userId } = req.body
+    const { userId } = req
     const post = await Post.findById(postId)
     const isLiked = post.likes.get(userId)
 
@@ -179,7 +177,7 @@ export const likePost = async (req, res) => {
 export const bookmarkPost = async (req, res) => {
   try {
     const { postId } = req.params
-    const { userId } = req.body
+    const { userId } = req
     const user = await User.findById(userId)
     const bookmarkIdx = user.bookmarks.indexOf(postId)
 
