@@ -35,11 +35,10 @@ export const createPost = async (req, res) => {
       likes: {},
       replies: [],
     })
-    await newPost.save()
+    const savedPost = await newPost.save()
     await _addPostToTags(newPost)
 
-    const posts = await Post.find({})
-    res.status(201).json(posts)
+    res.status(201).json(savedPost)
   } catch (err) {
     res.status(409).json({ error: err.message })
   }
@@ -67,7 +66,7 @@ export const createReply = async (req, res) => {
     let post = await Post.findById(postId)
     post.replies.push(newPost._id.toString())
     post = await post.save()
-    res.status(201).json(post)
+    res.status(201).json(newPost)
   } catch (err) {
     res.status(409).json({ error: err.message })
   }
