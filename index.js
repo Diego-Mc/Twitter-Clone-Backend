@@ -56,6 +56,9 @@ app.use('/api/users', userRoutes)
 app.use('/api/posts', postRoutes)
 app.use('/api/tags', tagsRoutes)
 
+app.get('/**', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'))
+})
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001
 mongoose
