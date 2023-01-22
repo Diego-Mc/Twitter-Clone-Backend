@@ -20,7 +20,12 @@ dotenv.config()
 const app = express()
 app.use(express.json())
 app.use(helmet())
-app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }))
+app.use(
+  helmet.crossOriginResourcePolicy({
+    policy:
+      process.env.NODE_ENV === 'production' ? 'same-origin' : 'cross-origin',
+  })
+)
 app.use(
   helmet.contentSecurityPolicy({
     useDefaults: true,
