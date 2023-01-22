@@ -31,7 +31,7 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   app.use(cors({ credentials: true, origin: true }))
 }
-app.use('/assets', express.static(path.join(__dirname, 'public/assets')))
+// app.use('/assets', express.static(path.join(__dirname, 'public/assets')))
 
 /* FILE STORAGE */
 // const storage = multer.diskStorage({
