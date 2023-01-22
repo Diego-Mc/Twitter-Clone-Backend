@@ -14,8 +14,8 @@ import tagsRoutes from './routes/tags.js'
 import cookieParser from 'cookie-parser'
 
 /* CONFIG */
-const __filepath = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filepath)
+// const __filepath = fileURLToPath(import.meta.url)
+// const __dirname = path.dirname(__filepath)
 dotenv.config()
 const app = express()
 app.use(express.json())
@@ -27,7 +27,7 @@ app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
 //TODO: setup cors for dist
 app.use(cookieParser())
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.resolve(__dirname, './public')))
+  app.use(express.static(path.resolve(__dirname, 'public')))
 } else {
   app.use(cors({ credentials: true, origin: true }))
 }
