@@ -7,6 +7,9 @@ import {
   toggleFollow,
   getUsers,
   getRandomToFollow,
+  uploadProfileImg,
+  uploadCoverImg,
+  updateDescription,
 } from '../controllers/users.js'
 import { verifyToken } from '../middleware/auth.js'
 
@@ -22,6 +25,9 @@ router.get('/:userId/followings', getUserFollowings)
 
 /* UPDATE */
 //TODO: not only verify token, but also verify token===user
-router.patch(':userToFollowId/follow', verifyToken, toggleFollow)
+router.patch('/:userToFollowId/follow', verifyToken, toggleFollow)
+router.patch('/upload/profile-img', verifyToken, uploadProfileImg)
+router.patch('/upload/cover-img', verifyToken, uploadCoverImg)
+router.patch('/update/description', verifyToken, updateDescription)
 
 export default router

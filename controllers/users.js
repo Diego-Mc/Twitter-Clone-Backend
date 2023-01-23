@@ -134,3 +134,48 @@ export const toggleFollow = async (req, res) => {
     res.status(404).json({ error: err.message })
   }
 }
+
+export const uploadProfileImg = async (req, res) => {
+  try {
+    const { imgUrl } = req.body
+    const { userId } = req
+    const user = await User.findById(userId)
+
+    user.imgUrl = imgUrl
+    const updatedUser = await user.save()
+
+    res.status(200).json(updatedUser)
+  } catch (err) {
+    res.status(404).json({ error: err.message })
+  }
+}
+
+export const uploadCoverImg = async (req, res) => {
+  try {
+    const { imgUrl } = req.body
+    const { userId } = req
+    const user = await User.findById(userId)
+
+    user.coverUrl = imgUrl
+    const updatedUser = await user.save()
+
+    res.status(200).json(updatedUser)
+  } catch (err) {
+    res.status(404).json({ error: err.message })
+  }
+}
+
+export const updateDescription = async (req, res) => {
+  try {
+    const { description } = req.body
+    const { userId } = req
+    const user = await User.findById(userId)
+
+    user.description = description
+    const updatedUser = await user.save()
+
+    res.status(200).json(updatedUser)
+  } catch (err) {
+    res.status(404).json({ error: err.message })
+  }
+}
