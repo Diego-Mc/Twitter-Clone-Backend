@@ -144,6 +144,8 @@ export const uploadProfileImg = async (req, res) => {
     user.imgUrl = imgUrl
     const updatedUser = await user.save()
 
+    //TODO: update posts
+
     res.status(200).json(updatedUser)
   } catch (err) {
     res.status(404).json({ error: err.message })
@@ -158,6 +160,8 @@ export const uploadCoverImg = async (req, res) => {
 
     user.coverUrl = imgUrl
     const updatedUser = await user.save()
+
+    //TODO: update posts
 
     res.status(200).json(updatedUser)
   } catch (err) {

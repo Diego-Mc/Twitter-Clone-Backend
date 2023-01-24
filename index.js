@@ -12,6 +12,7 @@ import userRoutes from './routes/users.js'
 import postRoutes from './routes/posts.js'
 import tagsRoutes from './routes/tags.js'
 import cookieParser from 'cookie-parser'
+import User from './models/User.js'
 
 /* CONFIG */
 const __filepath = fileURLToPath(import.meta.url)

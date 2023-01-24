@@ -76,12 +76,29 @@ export const createReply = async (req, res) => {
 export const getFeedPosts = async (req, res) => {
   try {
     const filterBy = req.query
-    const criteria = {}
+    const criteria = []
     if (filterBy) {
-      if (filterBy.search)
-        criteria.text = { $regex: filterBy.search, $options: 'i' }
+      if (filterBy.search) {
+        criteria.push({ text: { $regex: filterBy.search, $options: 'i' } })
+      }
+      if (filterBy.user) {
+        let userCriteria = { userId: filterBy.user }
+        if (filterBy.filter === 'tweets')
+          userCriteria.repliedTo = { $exists: 0 }
+        if (filterBy.filter === 'replies') {
+        }
+        if (filterBy.filter === 'media') userCriteria.imgUrl = { $exists: 1 }
+        if (filterBy.filter === 'likes') {
+          userCriteria = { [`likes.${filterBy.user}`]: { $exists: 1 } }
+        }
+        criteria.push(userCriteria)
+      }
     }
-    const posts = await Post.find(criteria)
+    let combinedCriteria = {}
+    if (criteria.length === 1) combinedCriteria = criteria[0]
+    if (criteria.length >= 2) combinedCriteria.$and = [...criteria]
+
+    const posts = await Post.find(combinedCriteria)
     res.status(200).json(posts)
   } catch (err) {
     res.status(404).json({ error: err.message })
