@@ -6,11 +6,7 @@ import {
   getFeedPosts,
   getPost,
   getPostReplies,
-  getUserLikedPosts,
-  getUserPosts,
-  getUserPostsAndReplies,
   likePost,
-  getUserMediaPosts,
 } from '../controllers/posts.js'
 import { verifyToken } from '../middleware/auth.js'
 
@@ -22,10 +18,6 @@ router.post('/:postId', verifyToken, createReply)
 
 /* READ */
 router.get('/', getFeedPosts)
-router.get('/profile/:userId', getUserPosts)
-router.get('/profile/all/:userId', getUserPostsAndReplies)
-router.get('/profile/media/:userId', getUserMediaPosts)
-router.get('/profile/likes/:userId', getUserLikedPosts)
 router.get('/:postId', getPost)
 router.get('/:postId/replies', getPostReplies)
 

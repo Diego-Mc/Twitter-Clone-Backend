@@ -87,7 +87,7 @@ export const getFeedPosts = async (req, res) => {
           userCriteria.repliedTo = { $exists: 0 }
         if (filterBy.filter === 'replies') {
         }
-        if (filterBy.filter === 'media') userCriteria.imgUrl = { $exists: 1 }
+        if (filterBy.filter === 'media') userCriteria.imgUrl = { $ne: '' }
         if (filterBy.filter === 'likes') {
           userCriteria = { [`likes.${filterBy.user}`]: { $exists: 1 } }
         }
@@ -99,47 +99,6 @@ export const getFeedPosts = async (req, res) => {
     if (criteria.length >= 2) combinedCriteria.$and = [...criteria]
 
     const posts = await Post.find(combinedCriteria)
-    res.status(200).json(posts)
-  } catch (err) {
-    res.status(404).json({ error: err.message })
-  }
-}
-
-export const getUserPosts = async (req, res) => {
-  try {
-    const { userId } = req.params
-    const posts = await Post.find({ userId, repliedTo: { $exists: 0 } })
-    res.status(200).json(posts)
-  } catch (err) {
-    res.status(404).json({ error: err.message })
-  }
-}
-
-export const getUserPostsAndReplies = async (req, res) => {
-  try {
-    const { userId } = req.params
-    const posts = await Post.find({ userId })
-    res.status(200).json(posts)
-  } catch (err) {
-    res.status(404).json({ error: err.message })
-  }
-}
-
-export const getUserMediaPosts = async (req, res) => {
-  try {
-    const { userId } = req.params
-    const posts = await Post.find({ userId, imgUrl: { $exists: true } })
-    res.status(200).json(posts)
-  } catch (err) {
-    res.status(404).json({ error: err.message })
-  }
-}
-
-export const getUserLikedPosts = async (req, res) => {
-  try {
-    const { userId } = req.params
-    const query = `likes.${userId}`
-    const posts = await Post.find({ [query]: { $exists: true } })
     res.status(200).json(posts)
   } catch (err) {
     res.status(404).json({ error: err.message })
