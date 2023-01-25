@@ -1,6 +1,7 @@
 import express from 'express'
 import {
   getUser,
+  getUserId,
   getLoggedInUser,
   getUserFollowings,
   getUserFollowers,
@@ -20,6 +21,7 @@ router.get('/', getUsers) //TODO: add filtering
 router.get('/logged-in', verifyToken, getLoggedInUser)
 router.get('/random-to-follow', verifyToken, getRandomToFollow)
 router.get('/:userId', getUser)
+router.get('/get-id/:username', getUserId)
 router.get('/:userId/followers', getUserFollowers)
 router.get('/:userId/followings', getUserFollowings)
 
