@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import User from '../models/User.js'
+import Post from '../models/Post.js'
 
 //TODO: add removal of users
 
@@ -177,8 +178,13 @@ export const uploadProfileImg = async (req, res) => {
     user.imgUrl = imgUrl
     const updatedUser = await user.save()
 
-    //TODO: update posts
+    const usersPosts = await Post.find({ userId })
+    const updatedPostsPrms = usersPosts.map((post) => {
+      post.composerImgUrl = imgUrl
+      post.save()
+    })
 
+    await Promise.all(updatedPostsPrms)
     res.status(200).json(updatedUser)
   } catch (err) {
     res.status(404).json({ error: err.message })
@@ -193,8 +199,6 @@ export const uploadCoverImg = async (req, res) => {
 
     user.coverUrl = imgUrl
     const updatedUser = await user.save()
-
-    //TODO: update posts
 
     res.status(200).json(updatedUser)
   } catch (err) {
