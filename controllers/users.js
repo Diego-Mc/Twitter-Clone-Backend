@@ -45,9 +45,15 @@ export const getLoggedInUser = async (req, res) => {
 export const getRandomToFollow = async (req, res) => {
   try {
     const { userId } = req
-    const usersToFollow = await User.find({
-      $and: [{ _id: { $ne: userId } }, { followers: { $nin: userId } }],
-    }).limit(3)
+    const usersToFollow = await User.aggregate([
+      { $sample: { size: 3 } },
+      {
+        $match: {
+          _id: { $ne: userId },
+          followers: { $ne: userId },
+        },
+      },
+    ])
     res.status(200).json(usersToFollow)
   } catch (err) {
     res.status(404).json({ error: err.message })
