@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import User from '../models/User.js'
 
 //TODO: add removal of users
@@ -46,14 +47,30 @@ export const getRandomToFollow = async (req, res) => {
   try {
     const { userId } = req
     const usersToFollow = await User.aggregate([
-      { $sample: { size: 3 } },
       {
         $match: {
-          _id: { $ne: userId },
-          followers: { $ne: userId },
+          $and: [
+            {
+              _id: {
+                $ne: mongoose.Types.ObjectId(userId),
+              },
+            },
+            {
+              followers: {
+                $ne: userId,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $sample: {
+          size: 3,
         },
       },
     ])
+
+    console.log('ok:', usersToFollow)
     res.status(200).json(usersToFollow)
   } catch (err) {
     res.status(404).json({ error: err.message })
