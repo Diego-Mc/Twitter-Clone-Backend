@@ -6,7 +6,7 @@ export const getTagPosts = async (req, res) => {
     const { tagName } = req.params
     const tag = await Tag.findOne({ tagName })
     const MAX_RESULTS = 6
-    const postsIds = Array.from(tag.posts.keys()).slice(0, MAX_RESULTS)
+    const postsIds = Array.from(tag.posts.keys()).slice(-MAX_RESULTS).reverse()
     const postsPrms = postsIds.map((post) => Post.findOne({ _id: post }))
     const posts = await Promise.all(postsPrms)
     res.status(200).json(posts)

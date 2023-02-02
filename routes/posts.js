@@ -3,6 +3,7 @@ import {
   bookmarkPost,
   createPost,
   createReply,
+  deletePost,
   getFeedPosts,
   getPost,
   getPostReplies,
@@ -24,5 +25,8 @@ router.get('/:postId/replies', getPostReplies)
 /* UPDATE */
 router.patch('/:postId/like', verifyToken, likePost)
 router.patch('/:postId/bookmark', verifyToken, bookmarkPost)
+
+/* DELETE */
+router.delete('/:postId', verifyToken, deletePost)
 
 export default router

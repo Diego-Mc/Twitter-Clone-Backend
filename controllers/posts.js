@@ -171,6 +171,24 @@ export const bookmarkPost = async (req, res) => {
   }
 }
 
+export const deletePost = async (req, res) => {
+  try {
+    const { postId } = req.params
+    const { userId } = req
+
+    let removedPost = await Post.findById(postId)
+
+    if (removedPost.userId !== userId) throw new Error('Not authorized')
+
+    removedPost = await Post.deleteOne({ _id: postId })
+    await Post.deleteMany({ repliedTo: postId })
+
+    res.status(200).json(removedPost)
+  } catch (err) {
+    res.status(404).json({ error: err.message })
+  }
+}
+
 /* UTILS: */
 function _addPostToTags(post) {
   try {
